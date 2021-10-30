@@ -18,7 +18,6 @@ async function run() {
 
     try {
         await client.connect();
-        // console.log('connected');
         const database = client.db('tourMongo');
         const spotCollection = database.collection('spots');
         const ordersCollection = database.collection('orders');
@@ -46,7 +45,6 @@ async function run() {
                 _id: ObjectId(id)
             }
             const result = await spotCollection.deleteOne(query);
-            // console.log(result);
             res.send(result.acknowledged);
         })
         app.get('/orders', async (req, res) => {
@@ -54,43 +52,7 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
-        // app.get('/orders/:uid', async (req, res) => {
-        //     const uid = req.params.uid;
-        //     const query = {
-        //         UID: uid
-        //     }
-        //     const result = await ordersCollection.findOne(query);
 
-        //     res.send(result?.orders);
-        // })
-        // app.put('/orders/:uid', async (req, res) => {
-        //     //finds whether previous order available
-        //     const uid = req.params.uid;
-        //     //console.log(uid);
-        //     //utility
-        //     const query = { UID: uid };
-        //     const options = { upsert: true };
-        //     //get prev
-        //     const check = await ordersCollection.findOne(query);
-        //     let prev = [];
-        //     if (check) {
-        //         prev = check.orders;
-        //     }
-
-        //     const newOrder = req.body;
-        //     //console.log(newOrder);
-        //     //combine
-        //     const latest = [...prev, newOrder];
-        //     //get ready
-        //     const updated = {
-        //         $set: {
-        //             orders: latest
-        //         }
-        //     }
-        //     const result = await ordersCollection.updateOne(query, updated, options);
-        //     //   console.log(latest);
-        //     res.send(result.acknowledged);
-        // })
         app.put('/orders/:id', async (req, res) => {
 
             const id = req.params.id;
@@ -111,17 +73,12 @@ async function run() {
             const result = await ordersCollection.insertOne(toSave);
             res.send(result.acknowledged);
         })
-        // app.delete('/orders', async (req, res) => {
-        //     const result = await ordersCollection.deleteMany({});
-        //     // console.log(result);
-        //     res.send(result.acknowledged);
-        // })
+
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = {
                 _id: ObjectId(id)
             }
-            // console.log(query);
 
             const result = await ordersCollection.deleteOne(query);
             console.log(result);
