@@ -52,34 +52,80 @@ async function run() {
         app.get('/orders', async (req, res) => {
             const cursor = ordersCollection.find({});
             const result = await cursor.toArray();
-            console.log(result);
             res.send(result);
         })
-        app.get('/orders/:id', async (req, res) => {
+        // app.get('/orders/:uid', async (req, res) => {
+        //     const uid = req.params.uid;
+        //     const query = {
+        //         UID: uid
+        //     }
+        //     const result = await ordersCollection.findOne(query);
+
+        //     res.send(result?.orders);
+        // })
+        // app.put('/orders/:uid', async (req, res) => {
+        //     //finds whether previous order available
+        //     const uid = req.params.uid;
+        //     //console.log(uid);
+        //     //utility
+        //     const query = { UID: uid };
+        //     const options = { upsert: true };
+        //     //get prev
+        //     const check = await ordersCollection.findOne(query);
+        //     let prev = [];
+        //     if (check) {
+        //         prev = check.orders;
+        //     }
+
+        //     const newOrder = req.body;
+        //     //console.log(newOrder);
+        //     //combine
+        //     const latest = [...prev, newOrder];
+        //     //get ready
+        //     const updated = {
+        //         $set: {
+        //             orders: latest
+        //         }
+        //     }
+        //     const result = await ordersCollection.updateOne(query, updated, options);
+        //     //   console.log(latest);
+        //     res.send(result.acknowledged);
+        // })
+        app.put('/orders/:id', async (req, res) => {
+
             const id = req.params.id;
-            const query = {
-                _id: ObjectId(id)
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updated = {
+                $set: {
+                    status: "approved"
+                }
             }
-            const result = await ordersCollection.findOne(query);
-            res.send(result);
-        })
-        app.post('/orders', async (req, res) => {
-            const toSave = req.body;
-            const result = await ordersCollection.insertOne(toSave);
-            res.send(result.acknowledged);
-        })
-        app.delete('/orders', async (req, res) => {
-            const result = await ordersCollection.deleteMany({});
+            const result = await ordersCollection.updateOne(query, updated, options);
             // console.log(result);
             res.send(result.acknowledged);
         })
+        app.post('/orders', async (req, res) => {
+            const toSave = req.body;
+            console.log(toSave);
+            const result = await ordersCollection.insertOne(toSave);
+            res.send(result.acknowledged);
+        })
+        // app.delete('/orders', async (req, res) => {
+        //     const result = await ordersCollection.deleteMany({});
+        //     // console.log(result);
+        //     res.send(result.acknowledged);
+        // })
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = {
                 _id: ObjectId(id)
             }
+            // console.log(query);
+
             const result = await ordersCollection.deleteOne(query);
-            // console.log(result);
+            console.log(result);
+
             res.send(result.acknowledged);
         })
 
